@@ -1,53 +1,496 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Felty – Privacy Policy</title>
-    <style>
-        body {
-            background: #000;
-            color: #ccc;
-            font-family: 'Courier New', monospace;
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 40px 24px;
-            line-height: 1.8;
-        }
-        h1 { color: #fff; font-size: 28px; }
-        h2 { color: #fff; font-size: 16px; margin-top: 32px; }
-        p  { color: #888; font-size: 14px; }
-        .date { font-size: 11px; color: #444; margin-bottom: 40px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Felty — You are not alone.</title>
+<meta name="description" content="Felty is an anonymous app that shows you how many people, right now, felt exactly what you feel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --void:#050506;
+    --paper:#f2f1ec;
+    --paper-dim:rgba(242,241,236,.55);
+    --paper-faint:rgba(242,241,236,.26);
+    --hairline:rgba(242,241,236,.12);
+
+    --cheated:#e05c5c;
+    --valued:#b088f9;
+    --unvalued:#7a7a9d;
+    --ghosted:#8eaabf;
+    --lovebombed:#f0a05a;
+    --succeeded:#4caf82;
+
+    --display:'Fraunces', serif;
+    --body:'Inter', -apple-system, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  body{
+    background:var(--void);
+    color:var(--paper);
+    font-family:var(--body);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--valued); color:var(--void); }
+  :focus-visible{ outline:2px solid var(--ghosted); outline-offset:3px; }
+
+  .grain{
+    position:fixed; inset:0; z-index:90; pointer-events:none; opacity:.4; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  }
+
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:80;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px clamp(20px,5vw,60px);
+    mix-blend-mode:difference;
+  }
+  .wordmark{ font-family:var(--mono); font-weight:700; font-size:13px; letter-spacing:.3em; }
+  .nav-cta{
+    font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.1em;
+    text-decoration:none; color:var(--paper); border:1px solid rgba(255,255,255,.35);
+    padding:8px 16px; border-radius:100px;
+  }
+
+  .progress{
+    position:fixed; top:0; left:0; height:2px; background:var(--paper); z-index:81;
+    width:0%; transition:width .05s linear;
+  }
+
+  /* ============ STAGE ============ */
+  .stage{ position:relative; height:900vh; }
+
+  .pin{
+    position:sticky; top:0; height:100svh; width:100%;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    perspective:1400px;
+  }
+
+  .bg-glow{
+    position:absolute; inset:-20%; z-index:0; pointer-events:none;
+    background:radial-gradient(closest-side, var(--glow-color,#8eaabf) 0%, transparent 70%);
+    opacity:0; filter:blur(60px);
+    transition:opacity 1s ease, background-color 1.2s ease;
+  }
+
+  .anchor{
+    position:relative; z-index:20; text-align:center; padding:0 20px;
+  }
+  .anchor .eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.24em; font-weight:500;
+    color:var(--paper-dim); text-transform:uppercase;
+    display:flex; align-items:center; justify-content:center; gap:9px;
+    opacity:0; transform:translateY(10px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .anchor .eyebrow::before{
+    content:''; width:6px; height:6px; border-radius:50%; background:var(--succeeded);
+    box-shadow:0 0 0 3px rgba(76,175,130,.18);
+  }
+  .anchor .eyebrow.show{ opacity:1; transform:translateY(0); }
+
+  h1.headline{
+    font-family:var(--display); font-weight:500;
+    font-size:clamp(2.4rem, 8vw, 6rem);
+    line-height:.98; letter-spacing:-.01em;
+    margin-top:18px;
+  }
+  h1.headline .line{ display:block; }
+  h1.headline em{ font-style:italic; color:var(--ghosted); transition:color 1s ease; }
+
+  .anchor .sub{
+    font-family:var(--body); color:var(--paper-dim); max-width:42ch; margin:20px auto 0;
+    font-size:clamp(.95rem,1.6vw,1.08rem); line-height:1.6;
+    opacity:0; transform:translateY(10px);
+    transition:opacity .6s ease .1s, transform .6s ease .1s;
+  }
+  .anchor .sub.show{ opacity:1; transform:translateY(0); }
+
+  .anchor .cta{
+    margin-top:34px; opacity:0; transform:translateY(10px);
+    transition:opacity .6s ease .2s, transform .6s ease .2s;
+  }
+  .anchor .cta.show{ opacity:1; transform:translateY(0); }
+
+  .btn-primary{
+    font-family:var(--mono); font-weight:700; font-size:12.5px; letter-spacing:.08em;
+    background:var(--paper); color:var(--void);
+    padding:15px 28px; border-radius:100px; text-decoration:none;
+    display:inline-flex; align-items:center; gap:9px;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 30px -12px rgba(242,241,236,.3); }
+  .btn-primary svg{ width:14px; height:14px; }
+
+  .feel-label{
+    position:relative; z-index:20; margin-top:24px;
+    font-family:var(--mono); font-size:12px; letter-spacing:.2em; font-weight:700;
+    opacity:0; transform:translateY(8px) scale(.97);
+    transition:opacity .5s ease, transform .5s ease;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .feel-label.show{ opacity:1; transform:translateY(0) scale(1); }
+  .feel-label .count{ font-weight:700; opacity:.85; color:var(--paper); }
+  .feel-label .word{ text-transform:uppercase; }
+
+  .feel-quote{
+    position:relative; z-index:20; margin-top:12px;
+    font-family:var(--display); font-style:italic; font-size:clamp(.95rem,2vw,1.15rem);
+    color:var(--paper-dim); max-width:36ch; text-align:center;
+    opacity:0; transform:translateY(8px);
+    transition:opacity .5s ease .08s, transform .5s ease .08s;
+  }
+  .feel-quote.show{ opacity:1; transform:translateY(0); }
+
+  /* ============ IMAGE PARTICLE FIELD ============ */
+  .field{ position:absolute; inset:0; z-index:5; pointer-events:none; }
+  .particle{
+    position:absolute; top:50%; left:50%; will-change:transform, opacity;
+    background-size:contain; background-repeat:no-repeat; background-position:center;
+  }
+
+  @media (max-width:640px){
+    .feel-quote{ max-width:28ch; }
+    .btn-primary{ padding:14px 22px; font-size:11.5px; }
+  }
+
+  /* ============ BELOW-FOLD ============ */
+  .below{ position:relative; z-index:20; background:var(--void); border-top:1px solid var(--hairline); }
+  .wrap{ max-width:1140px; margin:0 auto; padding-inline:clamp(20px,5vw,60px); }
+
+  .privacy-strip{ padding:40px 0; border-bottom:1px solid var(--hairline); }
+  .privacy-text{ font-size:.98rem; color:var(--paper-dim); max-width:56ch; }
+  .privacy-text strong{ color:var(--paper); font-weight:600; }
+  .privacy-link{
+    font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--ghosted);
+    text-decoration:none; white-space:nowrap; border-bottom:1px solid transparent; transition:border-color .25s ease;
+  }
+  .privacy-link:hover{ border-color:var(--ghosted); }
+
+  .lang-section{ padding:64px 0; text-align:center; }
+  .eyebrow-static{
+    font-family:var(--mono); font-size:11px; letter-spacing:.22em; font-weight:500;
+    color:var(--paper-dim); text-transform:uppercase; display:flex; align-items:center; justify-content:center; gap:9px;
+  }
+  .eyebrow-static::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--succeeded); box-shadow:0 0 0 3px rgba(76,175,130,.18); }
+  .lang-row{ display:flex; justify-content:center; gap:clamp(14px,4vw,30px); margin-top:24px; flex-wrap:wrap; }
+  .lang-item{ font-family:var(--mono); font-size:12px; color:var(--paper-dim); }
+  .lang-caption{ font-family:var(--display); font-style:italic; font-size:1.02rem; color:var(--paper-dim); margin-top:26px; }
+
+  .final-section{ padding:110px 0 90px; text-align:center; border-top:1px solid var(--hairline); }
+  .final-section h2{
+    font-family:var(--display); font-weight:500; font-size:clamp(2rem,5vw,3.4rem);
+    max-width:14ch; margin:0 auto; line-height:1.08;
+  }
+  .final-actions{ margin-top:34px; display:flex; justify-content:center; }
+
+  footer{
+    padding:40px 0 56px; display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:16px; border-top:1px solid var(--hairline);
+  }
+  .footer-links{ display:flex; gap:24px; flex-wrap:wrap; }
+  .footer-links a{ font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:var(--paper-faint); text-decoration:none; }
+  .footer-links a:hover{ color:var(--paper); }
+  .footer-mark{ font-family:var(--mono); font-size:11px; color:var(--paper-faint); letter-spacing:.05em; }
+
+  @media (max-width:640px){
+    .privacy-strip > div, footer > div{ flex-direction:column; align-items:flex-start; }
+  }
+
+</style>
 </head>
 <body>
-    <h1>Felty</h1>
-    <p class="date">Privacy Policy · Last updated: April 2026</p>
 
-    <h2>1. No Data Collected</h2>
-    <p>Felty does not collect, store, transmit or share any personal information. We do not ask for your name, email, phone number, location, or any identifying information.</p>
+<div class="grain"></div>
+<div class="progress" id="progress"></div>
 
-    <h2>2. No Account Required</h2>
-    <p>Felty requires no registration or login. You can use the app completely anonymously.</p>
+<header>
+  <div class="wordmark">FELTY</div>
+  <a class="nav-cta" href="#get">GET FELTY</a>
+</header>
 
-    <h2>3. No Tracking</h2>
-    <p>Felty does not use analytics tools, tracking pixels, or third-party SDKs that monitor user behavior.</p>
+<div class="stage" id="stage">
+  <div class="pin">
+    <div class="bg-glow" id="bgGlow"></div>
+    <div class="field" id="field"></div>
 
-    <h2>4. No Cookies</h2>
-    <p>Felty does not use cookies or any similar tracking technologies.</p>
+    <div class="anchor">
+      <div class="eyebrow" id="eyebrow">ANONYMOUS · NO DATA COLLECTED</div>
+      <h1 class="headline" id="headline">
+        <span class="line">You are</span>
+        <span class="line">not <em>alone.</em></span>
+      </h1>
 
-    <h2>5. Local Storage Only</h2>
-    <p>All data generated within the app is stored locally on your device only and is never transmitted to any server.</p>
+      <div class="feel-label" id="feelLabel"></div>
+      <div class="feel-quote" id="feelQuote"></div>
 
-    <h2>6. Children's Privacy</h2>
-    <p>Felty does not knowingly collect any information from children under the age of 13.</p>
+      <p class="sub" id="sub">Somewhere, right now, someone is tapping the exact word you needed tonight. Felty shows you how many.</p>
+      <div class="cta" id="cta">
+        <a class="btn-primary" href="#get" id="get">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M12 18h.01"/></svg>
+          Get Felty — Free
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <h2>7. Changes</h2>
-    <p>If we update this privacy policy, the new version will be posted on this page with an updated date.</p>
+<div class="below">
 
-    <h2>8. Contact</h2>
-    <h2>8. Country Detection</h2>
-<p>Felty detects your country to show regional statistics. This is performed via ipapi.co using your IP address. Felty does not store your IP address at any point. Only your country code is used and immediately discarded after detection.</p>
-    <p>Questions? Reach us at: <strong style="color:#fff;">felty.app.contact@gmail.com</strong></p>
+  <section class="privacy-strip">
+    <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
+      <div class="privacy-text"><strong>No sign-up. No name. Nothing tracked back to you.</strong> Felty never asks who you are, and never will.</div>
+      <a class="privacy-link" href="https://kocagoz07.github.io/Felty-Privacy/" target="_blank" rel="noopener">READ THE PRIVACY POLICY →</a>
+    </div>
+  </section>
+
+  <section class="lang-section">
+    <div class="wrap">
+      <div class="eyebrow-static">EVERYWHERE, AT ONCE</div>
+      <div class="lang-row">
+        <div class="lang-item">🇬🇧 English</div>
+        <div class="lang-item">🇹🇷 Türkçe</div>
+        <div class="lang-item">🇪🇸 Español</div>
+        <div class="lang-item">🇷🇺 Русский</div>
+        <div class="lang-item">🇳🇱 Nederlands</div>
+        <div class="lang-item">🇩🇪 Deutsch</div>
+      </div>
+      <div class="lang-caption">Felt in six languages. Understood in all of them.</div>
+    </div>
+  </section>
+
+  <section class="final-section">
+    <div class="wrap">
+      <div class="eyebrow-static">GET FELTY</div>
+      <h2 style="margin-top:16px;">You don't have to say it out loud.</h2>
+      <div class="final-actions">
+        <a class="btn-primary" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M12 18h.01"/></svg>
+          Download for iOS
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;">
+      <div class="footer-mark">FELTY © 2026 · MADE TO BE HELD, NOT SHARED</div>
+      <div class="footer-links">
+        <a href="https://kocagoz07.github.io/Felty-Privacy/" target="_blank" rel="noopener">PRIVACY POLICY</a>
+        <a href="https://buymeacoffee.com/felty" target="_blank" rel="noopener">SUPPORT FELTY</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+
+  const IMG = {
+    lovebombed: "data:image/png;base64,__B64_LOVEBOMBED__",
+    valued:     "data:image/png;base64,__B64_VALUED__",
+    ghosted:    "data:image/png;base64,__B64_GHOSTED__",
+    cheated:    "data:image/png;base64,__B64_CHEATED__",
+    unvalued:   "data:image/png;base64,__B64_UNVALUED__",
+    succeeded:  "data:image/png;base64,__B64_SUCCEEDED__"
+  };
+
+  const segments = [
+    { key:'intro' },
+    { key:'lovebombed', word:'Love Bombed', color:'#f0a05a', count:'2.0M', quote:'"Real love is consistent, not explosive."', img:IMG.lovebombed, w:76, motion:'burst' },
+    { key:'valued',     word:'Valued',      color:'#b088f9', count:'891K', quote:'"Being valued is what you deserve, always."', img:IMG.valued, w:60, motion:'sparkle' },
+    { key:'ghosted',    word:'Ghosted',     color:'#8eaabf', count:'5.7M', quote:'"Their silence says nothing about your worth."', img:IMG.ghosted, w:78, motion:'drift' },
+    { key:'cheated',    word:'Cheated',     color:'#e05c5c', count:'2.8M', quote:'"Your loyalty says everything about you."', img:IMG.cheated, w:84, motion:'wilt' },
+    { key:'unvalued',   word:'Unvalued',    color:'#7a7a9d', count:'4.2M', quote:'"You are valuable, even when unseen."', img:IMG.unvalued, w:80, motion:'shatter' },
+    { key:'succeeded',  word:'Succeeded',   color:'#4caf82', count:'1.2M', quote:'"Success looks good on you. Own it."', img:IMG.succeeded, w:90, motion:'celebrate' },
+    { key:'outro' }
+  ];
+
+  const N = segments.length;
+  const stage = document.getElementById('stage');
+  const field = document.getElementById('field');
+  const bgGlow = document.getElementById('bgGlow');
+  const headline = document.getElementById('headline');
+  const eyebrow = document.getElementById('eyebrow');
+  const sub = document.getElementById('sub');
+  const cta = document.getElementById('cta');
+  const feelLabel = document.getElementById('feelLabel');
+  const feelQuote = document.getElementById('feelQuote');
+  const progress = document.getElementById('progress');
+
+  let activeIndex = -1;
+  const MAX_PARTICLES = window.innerWidth < 640 ? 12 : 22;
+  const particlePool = [];
+
+  for(let i=0;i<MAX_PARTICLES;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.opacity = '0';
+    field.appendChild(p);
+    particlePool.push(p);
+  }
+
+  function clearParticles(){
+    particlePool.forEach(p=>{ p.style.opacity = '0'; p.style.backgroundImage = ''; });
+  }
+
+  function rand(min,max){ return Math.random()*(max-min)+min; }
+
+  function animateParticle(p, seg, i, t){
+    p.style.backgroundImage = 'url(' + seg.img + ')';
+    const baseW = seg.w * (0.7 + (i % 4) * 0.16);
+    p.style.width = baseW + 'px';
+    p.style.height = baseW + 'px';
+
+    const angle = (i / MAX_PARTICLES) * Math.PI * 2 + rand(-.25,.25);
+    const seed = (i * 137.5) % 360;
+
+    let x=0, y=0, z=0, rot=0, scale=1, opacity=0;
+
+    if(seg.motion === 'burst'){
+      const dist = t * rand(240,480);
+      x = Math.cos(angle) * dist;
+      y = Math.sin(angle) * dist * .7 - t*40;
+      z = rand(-160,160) * t;
+      rot = seed + t*220;
+      scale = .55 + t*1.0;
+      opacity = t < .12 ? t/.12 : Math.max(0, 1-((t-.55)/.45));
+    }
+
+    if(seg.motion === 'sparkle'){
+      const orbit = 80 + (i%5)*40;
+      x = Math.cos(angle + t*2.1) * orbit;
+      y = Math.sin(angle + t*2.1) * orbit * .55;
+      z = Math.sin(t*6 + i) * 120;
+      rot = t*140;
+      scale = .5 + Math.sin(t*Math.PI)*1.1;
+      opacity = Math.sin(Math.min(t,1)*Math.PI) * .95;
+    }
+
+    if(seg.motion === 'drift'){
+      const startX = (i%2===0? -1:1) * rand(220,480);
+      x = startX * (1-t) + Math.sin(t*Math.PI*2+i)*26;
+      y = -200 + t*400 + Math.sin(i)*26;
+      z = rand(-140,140);
+      rot = Math.sin(t*3+i)*8;
+      scale = .65 + Math.sin(t*Math.PI)*.45;
+      opacity = Math.sin(Math.min(t,1)*Math.PI) * .9;
+    }
+
+    if(seg.motion === 'wilt'){
+      x = (i%2===0?-1:1) * (130 + (i%6)*54);
+      y = -50 + t*200 + (i%4)*12;
+      z = rand(-110,110);
+      rot = seed*.35 + t*50;
+      scale = 1 - t*.3;
+      opacity = t < .15 ? t/.15 : Math.max(0,1-((t-.6)/.4));
+    }
+
+    if(seg.motion === 'shatter'){
+      const dist = t*t * rand(190,420);
+      x = Math.cos(angle) * dist;
+      y = Math.sin(angle) * dist - t*t*140;
+      z = rand(-160,160)*t;
+      rot = seed + t*360;
+      scale = 1 - t*.35;
+      opacity = t < .1 ? t/.1 : Math.max(0, 1-((t-.5)/.5));
+    }
+
+    if(seg.motion === 'celebrate'){
+      const dist = t * rand(260,520);
+      x = Math.cos(angle) * dist * .9;
+      y = Math.sin(angle) * dist * .6 - t*130 + t*t*240;
+      z = rand(-200,200);
+      rot = seed*2 + t*480;
+      scale = .65 + (i%3)*.22;
+      opacity = t < .1 ? t/.1 : Math.max(0,1-((t-.6)/.4));
+    }
+
+    p.style.opacity = String(Math.max(0,Math.min(1,opacity)));
+    p.style.transform = 'translate(-50%,-50%) translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,' + z.toFixed(1) + 'px) rotate(' + rot.toFixed(1) + 'deg) scale(' + scale.toFixed(2) + ')';
+  }
+
+  function renderSegment(seg, t){
+    if(seg.key === 'intro' || seg.key === 'outro'){ clearParticles(); return; }
+    particlePool.forEach((p,i)=> animateParticle(p, seg, i, t));
+  }
+
+  function setActive(index){
+    if(index === activeIndex) return;
+    activeIndex = index;
+    const seg = segments[index];
+    const isFeeling = seg.key !== 'intro' && seg.key !== 'outro';
+
+    if(isFeeling){
+      bgGlow.style.setProperty('--glow-color', seg.color);
+      bgGlow.style.opacity = '.2';
+      feelLabel.innerHTML = '<span class="count">' + seg.count + '</span><span class="word" style="color:' + seg.color + '">' + seg.word + '</span>';
+      feelLabel.classList.add('show');
+      feelQuote.textContent = seg.quote;
+      feelQuote.classList.add('show');
+      eyebrow.classList.remove('show');
+      sub.classList.remove('show');
+      cta.classList.remove('show');
+      headline.querySelector('em').style.color = seg.color;
+    } else {
+      bgGlow.style.opacity = '0';
+      feelLabel.classList.remove('show');
+      feelQuote.classList.remove('show');
+      headline.querySelector('em').style.color = '';
+
+      eyebrow.classList.add('show');
+      cta.classList.add('show');
+      if(seg.key === 'intro'){ sub.classList.add('show'); }
+      else { sub.classList.remove('show'); }
+    }
+  }
+
+  let ticking = false;
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(()=>{
+      const rect = stage.getBoundingClientRect();
+      const total = stage.offsetHeight - window.innerHeight;
+      const scrolled = Math.min(Math.max(-rect.top, 0), total);
+      const overall = total > 0 ? scrolled/total : 0;
+
+      progress.style.width = (overall*100).toFixed(1) + '%';
+
+      const segLen = 1/N;
+      let idx = Math.floor(overall / segLen);
+      idx = Math.min(idx, N-1);
+      const localRaw = (overall - idx*segLen) / segLen;
+      const t = Math.min(Math.max(localRaw,0),1);
+
+      setActive(idx);
+      renderSegment(segments[idx], t);
+
+      ticking = false;
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+  setActive(0);
+
+})();
+</script>
+
 </body>
 </html>
