@@ -401,7 +401,10 @@ header {
 footer { border-top:1px solid var(--line);padding:42px 0 60px; }
 .footer-inner { display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap; }
 .footer-mark,.footer-links a { color:var(--faint);font-size:12px;text-decoration:none; }
-.footer-links { display:flex;gap:25px; }
+ .footer-links { display:flex;gap:25px;position:relative;z-index:20; }
+.footer-links a { position:relative;z-index:21;display:inline-block;pointer-events:auto; }
+.footer-links .support-link { color:#b36cff;text-shadow:0 0 5px rgba(141,53,255,.85),0 0 14px rgba(141,53,255,.65),0 0 28px rgba(141,53,255,.45); }
+.footer-links .support-link:hover { color:#d6a8ff;text-shadow:0 0 6px rgba(141,53,255,1),0 0 18px rgba(141,53,255,.85),0 0 34px rgba(141,53,255,.6); }
 
 /* Responsive */
 @media(max-width:850px){
@@ -656,7 +659,7 @@ footer { border-top:1px solid var(--line);padding:42px 0 60px; }
     <div class="footer-mark">FELTY © 2026 · MADE TO BE HELD, NOT SHARED</div>
     <div class="footer-links">
       <a href="https://felty-app.com/privacy-policy.html" >PRIVACY POLICY</a>
-      <a href="https://buymeacoffee.com/memokcgze" >SUPPORT FELTY</a>
+      <a class="support-link" href="https://buymeacoffee.com/memokcgze" onclick="window.location.href='https://buymeacoffee.com/memokcgze'; return false;">SUPPORT FELTY</a>
     </div>
   </div>
 </footer>
