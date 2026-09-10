@@ -634,11 +634,17 @@ footer { border-top:1px solid var(--line);padding:42px 0 60px; }
 </div>
 </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (() => {
-  /* Counter */
+  /* Live Supabase Counter */
   const counter=document.getElementById("counter");
   const live=document.getElementById("live");
+
+  const SUPABASE_URL="https://zyijhshviqxbbtzljajr.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY="sb_publishable_ugyJGAwocBRpUZZbqSsfoQ_BH95cO2y";
+  const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+
   let number=5827412;
   const words=["ghosted","cheated","valued","succeeded","unvalued","love bombed","got cheated"];
 
@@ -653,14 +659,39 @@ footer { border-top:1px solid var(--line);padding:42px 0 60px; }
     requestAnimationFrame(frame);
   }
 
-  function simulateTap(){
-    countTo(number + Math.floor(Math.random()*4)+1);
-    live.textContent='● someone just tapped "'+words[Math.floor(Math.random()*words.length)]+'"';
-    live.classList.add("show");
-    setTimeout(()=>live.classList.remove("show"),2200);
-    setTimeout(simulateTap,3800+Math.random()*2600);
+  async function fetchGlobalCounter(){
+    const {data,error}=await supabase
+      .from("felty_global_counter")
+      .select("count")
+      .eq("id",1)
+      .single();
+
+    if(error){
+      console.error("FELTY: Global counter fetch failed:",error);
+      return;
+    }
+
+    if(typeof data.count==="number") countTo(data.count);
   }
-  setTimeout(simulateTap,1700);
+
+  supabase
+    .channel("felty-global-counter")
+    .on(
+      "postgres_changes",
+      {event:"UPDATE",schema:"public",table:"felty_global_counter",filter:"id=eq.1"},
+      payload=>{
+        const newCount=payload.new?.count;
+        if(typeof newCount==="number"){
+          countTo(newCount);
+          live.textContent='● someone just tapped "'+words[Math.floor(Math.random()*words.length)]+'"';
+          live.classList.add("show");
+          setTimeout(()=>live.classList.remove("show"),2200);
+        }
+      }
+    )
+    .subscribe(status=>console.log("FELTY: Counter realtime status:",status));
+
+  fetchGlobalCounter();
 
   /* Cinematic reveal */
   const feelings=[...document.querySelectorAll(".feeling")];
